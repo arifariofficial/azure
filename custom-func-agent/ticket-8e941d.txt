@@ -1,4 +1,0 @@
-Support ticket: 8e941d
-Submitted by: alex@contoso.com
-Description:
-My computer won't work.
