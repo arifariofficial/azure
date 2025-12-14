@@ -18,16 +18,17 @@ class FoundryAgentExecutor(AgentExecutor):
     async def _get_or_create_agent(self) -> TitleAgent:
         if not self._foundry_agent:
             self._foundry_agent = await create_foundry_title_agent()
+
         return self._foundry_agent
 
     async def _process_request(
         self, message_parts: list[Part], context_id: str, task_updater: TaskUpdater
     ) -> None:
-        # Process a user request through the Foundry agent
 
+        # Process a user request through the Foundry agent
         try:
             # Retrieve message from A2A parts
-            user_message = message_parts[0].root.text
+            user_message = message_parts[0].root.text  # type: ignore
 
             # Get the title agent
             agent = await self._get_or_create_agent()
@@ -69,6 +70,9 @@ class FoundryAgentExecutor(AgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ):
+        if context.task_id is None or context.context_id is None:
+            print("Title Agent: Cannot execute -task_id or contex_id is None")
+            return
 
         # Create task updater
         updater = TaskUpdater(event_queue, context.task_id, context.context_id)
@@ -78,10 +82,14 @@ class FoundryAgentExecutor(AgentExecutor):
         await updater.start_work()
 
         # Process the request
-        await self._process_request(context.message.parts, context.context_id, updater)
+        await self._process_request(context.message.parts, context.context_id, updater)  # type: ignore
 
     async def cancel(self, context: RequestContext, event_queue: EventQueue):
         print(f"Title Agent: Cancelling execution for context {context.context_id}")
+
+        if context.task_id is None or context.context_id is None:
+            print("Title Agent: Cannot execute -task_id or contex_id is None")
+            return
 
         updater = TaskUpdater(event_queue, context.task_id, context.context_id)
         await updater.failed(
