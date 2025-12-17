@@ -1,10 +1,10 @@
 ## Azure Search Documents SDK Installation
 
-bash ```
+```bash
 pip install azure-search-documents
 ```
 
-bash ```
+```bash
 az search service create --name mysearch --resource-group mysearch-rg --location swedencentral --sku standard
 ```
 
